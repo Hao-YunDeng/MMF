@@ -1,0 +1,74 @@
+dataset_config:
+  hateful_memes:
+    annotations:
+      test:
+      - hateful_memes/defaults/annotations/test_unseen.jsonl
+      train:
+      - hateful_memes/defaults/annotations/train.jsonl
+      val:
+      - hateful_memes/defaults/annotations/dev_unseen.jsonl
+    data_dir: ${env.data_dir}/datasets
+    depth_first: false
+    fast_read: false
+    features:
+      test:
+      - hateful_memes/defaults/features/detectron.lmdb
+      train:
+      - hateful_memes/defaults/features/detectron.lmdb
+      val:
+      - hateful_memes/defaults/features/detectron.lmdb
+    images:
+      test:
+      - hateful_memes/defaults/images/
+      train:
+      - hateful_memes/defaults/images/
+      val:
+      - hateful_memes/defaults/images/
+    max_features: 100
+    processors:
+      bbox_processor:
+        params:
+          max_length: 50
+        type: bbox
+      image_processor:
+        params:
+          transforms:
+          - params:
+              size:
+              - 256
+              - 256
+            type: Resize
+          - params:
+              size:
+              - 224
+              - 224
+            type: CenterCrop
+          - ToTensor
+          - GrayScaleTo3Channels
+          - params:
+              mean:
+              - 0.46777044
+              - 0.44531429
+              - 0.40661017
+              std:
+              - 0.12221994
+              - 0.12145835
+              - 0.14380469
+            type: Normalize
+        type: torchvision_transforms
+      text_processor:
+        params:
+          max_length: 14
+          preprocessor:
+            params: {}
+            type: simple_sentence
+          vocab:
+            embedding_name: glove.6B.300d
+            type: intersected
+            vocab_file: hateful_memes/defaults/extras/vocabs/vocabulary_100k.txt
+        type: vocab
+    return_features_info: false
+    use_features: false
+    use_images: true
+evaluation:
+  predict_file_format: csv
